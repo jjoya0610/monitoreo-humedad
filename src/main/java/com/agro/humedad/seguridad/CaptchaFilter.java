@@ -12,12 +12,6 @@ import org.springframework.web.server.WebFilterChain;
 import reactor.core.publisher.Mono;
 
 import java.nio.charset.StandardCharsets;
-
-/**
- * Filtro perimetral: toda peticion a /api/** debe traer un token Captcha valido en la
- * cabecera X-Captcha-Token (o en el parametro ?captcha= para clientes de eventos SSE).
- * /actuator (salud para Kubernetes) queda fuera.
- */
 @Component
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class CaptchaFilter implements WebFilter {
@@ -27,7 +21,6 @@ public class CaptchaFilter implements WebFilter {
     public CaptchaFilter(CaptchaServicio captcha) {
         this.captcha = captcha;
     }
-
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
         String ruta = exchange.getRequest().getPath().value();
@@ -41,7 +34,6 @@ public class CaptchaFilter implements WebFilter {
         return captcha.validar(token)
                 .flatMap(valido -> valido ? chain.filter(exchange) : rechazar(exchange));
     }
-
     private Mono<Void> rechazar(ServerWebExchange exchange) {
         ServerHttpResponse respuesta = exchange.getResponse();
         respuesta.setStatusCode(HttpStatus.FORBIDDEN);

@@ -14,12 +14,6 @@ import reactor.core.publisher.Mono;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.time.Duration;
-
-/**
- * SEGURIDAD - CAPTCHA. Si se configura CAPTCHA_SECRET se valida el token contra Google
- * reCAPTCHA (WebClient con timeout; si Google no responde se RECHAZA: falla cerrada).
- * Sin secreto funciona en modo DEMO con un token fijo, para pruebas en clase.
- */
 @Service
 public class CaptchaServicio {
 

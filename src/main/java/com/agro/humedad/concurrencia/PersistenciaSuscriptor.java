@@ -7,12 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import java.util.concurrent.Flow;
-
-/**
- * Suscriptor que guarda cada lectura en la base de datos y actualiza la cache.
- * Pide UNA lectura a la vez (request(1)): asi nunca se ve desbordado.
- * Si falla una lectura, la registra y sigue con la siguiente (resiliencia).
- */
 @Component
 public class PersistenciaSuscriptor implements Flow.Subscriber<Lectura> {
 

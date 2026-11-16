@@ -9,10 +9,6 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Consumer;
 
-/**
- * MODELO 2 - PASO DE MENSAJES (ACTOR): tiene un buzon (mailbox) y un unico hilo que
- * procesa un mensaje a la vez. Nadie comparte su estado; solo le envian mensajes.
- */
 public final class ActorLecturas implements AutoCloseable {
 
     public record Estado(long procesadas, long rechazadas, int pendientes) {

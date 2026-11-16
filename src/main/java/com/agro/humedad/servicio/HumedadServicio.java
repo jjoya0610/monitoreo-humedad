@@ -28,12 +28,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeoutException;
-
-/**
- * Capa reactiva. JPA es bloqueante, por eso toda consulta a la base de datos se ejecuta
- * en Schedulers.boundedElastic() (el planificador pensado para E/S): el hilo del
- * servidor nunca se queda esperando (RESPONSIVO). Los timeouts y fallbacks dan RESILIENCIA.
- */
 @Service
 public class HumedadServicio {
 
@@ -88,12 +82,6 @@ public class HumedadServicio {
                 .onErrorMap(TimeoutException.class, this::noDisponible)
                 .switchIfEmpty(Mono.error(() -> sinLecturas(parcelaId)));
     }
-
-    /**
-     * PARTICIONAMIENTO DE TAREAS (paralela): tres funciones DISTINTAS corren a la vez con
-     * CompletableFuture (resumen estadistico, conteo por nivel, ultima lectura) y se
-     * combinan con thenCombine cuando todas terminan.
-     */
     public Mono<InformeParcela> informe(String parcelaId) {
         return Mono.defer(() -> {
             CompletableFuture<ResumenHumedad> tareaResumen = CompletableFuture.supplyAsync(
@@ -130,8 +118,6 @@ public class HumedadServicio {
                 .timeout(LIMITE)
                 .onErrorMap(TimeoutException.class, this::noDisponible);
     }
-
-    /** Todas las lecturas validas, en vivo. */
     public Flux<LecturaRespuesta> enVivo() {
         return flujo.comoFlux().map(LecturaRespuesta::de);
     }
