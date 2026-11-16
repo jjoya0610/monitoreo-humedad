@@ -1,0 +1,34 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: agro
+      POSTGRES_USER: agro
+      POSTGRES_PASSWORD: agro123
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U agro -d agro"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  app:
+    build: .
+    image: monitoreo-humedad:1.0.0
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+    environment:
+      DB_URL: jdbc:postgresql://db:5432/agro
+      DB_USER: agro
+      DB_PASSWORD: agro123
+      # Dejar vacio = Captcha en modo DEMO. Con una clave real de Google reCAPTCHA se valida de verdad.
+      CAPTCHA_SECRET: ""
+      CAPTCHA_TOKEN_DEMO: AGRO-CAPTCHA-DEMO
+      SIMULADOR_AUTOARRANQUE: "true"
+
+volumes:
+  pgdata:
